@@ -2,7 +2,7 @@ import React, {useRef} from 'react'
 import {Link} from 'react-router-dom'
 import {Form, Container, Button} from 'react-bootstrap'
 import axios from 'axios'
-import {BASE_URL} from '../config'
+import {AUTH_BASE_URL} from '../config'
 
 export default function Register() {
     const emailRef = useRef()
@@ -18,14 +18,12 @@ export default function Register() {
         }
         axios({
 			method:'post',
-			url:BASE_URL +'/auth/register',
+			url:AUTH_BASE_URL +'/auth/register',
 			data: body
 		})
 		.then(data=>{
-			console.log(data.data);
 		})
 		.catch(err=>{
-			console.log(err);
         })    
     }
 

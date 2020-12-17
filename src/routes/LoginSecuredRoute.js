@@ -1,13 +1,14 @@
 import React from 'react'
 import {Route, Redirect} from 'react-router-dom'
+import useLocalStorage from '../hooks/useLocalStorage';
 
 export default function LoginSecuredRoute({ children, ...rest }) {
-  let user = window.localStorage.getItem('user')
+  let [refreshToken, setRefreshToken] = useLocalStorage('refresh_token', null) 
   return (
       <Route
         {...rest}
         render={({ location }) =>
-          user !== null ? (
+          refreshToken !== null ? (
             <Redirect
               to={{
                 pathname: "/",

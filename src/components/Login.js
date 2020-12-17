@@ -1,17 +1,18 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState} from 'react'
 import {Form, Container, Button} from 'react-bootstrap'
-import {Link, useHistory, useLocation} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import axios from 'axios'
-import {BASE_URL} from '../config'
+import {AUTH_BASE_URL} from '../config'
 import useLocalStorage from '../hooks/useLocalStorage'
+
+
 export default function Login() {
     const emailRef = useRef()
     const passwordRef = useRef()
-    let history = useHistory();
-    let location = useLocation();
-  
-    let { from } = location.state || { from: { pathname: "/" } };
-    const [user, setUser] = useLocalStorage('user',null)
+    const [accessToken, setAccessToken] = useLocalStorage('access_token',null)
+    const [refreshToken, setRefreshToken] = useLocalStorage('refresh_token',null)
+    const [errMess, setErrMess] = useState('')
+
     function handleSubmit(e) {
         e.preventDefault()
         const body = {
@@ -20,20 +21,17 @@ export default function Login() {
         }
         axios({
 			method:'post',
-			url:BASE_URL +'/auth/login',
+			url:AUTH_BASE_URL +'/auth/login',
 			data: body
 		})
 		.then(data=>{
-            console.log(data.data);
-            if(user) {
-
-            }
-            else {
-                setUser(data.data.name)
-            }
+            const {accessToken, refreshToken} = data.data
+            setAccessToken(accessToken)
+            setRefreshToken(refreshToken)
+            window.location.href = '/'
 		})
 		.catch(err=>{
-			console.log(err);
+			setErrMess('Failed to log in')
         })    
     }
 
@@ -52,6 +50,9 @@ export default function Login() {
                     </Form.Group>
                     <Button type = 'submit'>Login</Button>
                 </Form>
+                <div>
+                    {errMess}
+                </div>
                 <Link to = '/register'>Register</Link>
             </Container>
         </div>

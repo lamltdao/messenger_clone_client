@@ -3,12 +3,12 @@ import {Route, Redirect} from 'react-router-dom'
 import useLocalStorage from '../hooks/useLocalStorage';
 
 export default function HomeSecuredRoute({ children, ...rest }) {
-  let [user, setUser] = useLocalStorage('user', null) 
+  let [refreshToken, setRefreshToken] = useLocalStorage('refresh_token', null) 
   return (
       <Route
         {...rest}
         render={({ location }) =>
-          user !== null ? (
+          refreshToken !== null ? (
             children
           ) : (
             <Redirect

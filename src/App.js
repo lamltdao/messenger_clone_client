@@ -3,7 +3,7 @@ import Login from './components/Login'
 import Main from './components/Main'
 import Register from './components/Register'
 import HomeSecuredRoute from './routes/HomeSecuredRoute'
-
+import LoginSecuredRoute from './routes/LoginSecuredRoute'
 import {
   BrowserRouter as Router,
   Switch, 
@@ -14,15 +14,15 @@ function App() {
     <div className="App">
         <Router>
           <Switch>
-            <Route path = '/login'>
+            <LoginSecuredRoute exact path = '/login'>
               <Login/>
-            </Route>
+            </LoginSecuredRoute>
 
-            <Route path = '/register'>
+            <Route exact path = '/register'>
               <Register/>
             </Route>
 
-            <HomeSecuredRoute path = '/'>
+            <HomeSecuredRoute exact path = '/'>
               <Main/>
             </HomeSecuredRoute>
 
