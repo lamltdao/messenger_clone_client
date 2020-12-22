@@ -4,6 +4,8 @@ import Main from './components/Main'
 import Register from './components/Register'
 import HomeSecuredRoute from './routes/HomeSecuredRoute'
 import LoginSecuredRoute from './routes/LoginSecuredRoute'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import {
   BrowserRouter as Router,
   Switch, 
