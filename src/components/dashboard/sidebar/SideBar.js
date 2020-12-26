@@ -4,6 +4,7 @@ import ContactList from './ContactList'
 import {Tab, Nav, Button, Modal} from 'react-bootstrap'
 import NewConversationModal from './NewConversationModal'
 import NewContactModal from './NewContactModal'
+import {useUserContext} from '../../../contexts/UserProvider'
 
 const CONVERSATION_KEY = 'conversation'
 const CONTACT_KEY = 'contact'
@@ -12,12 +13,17 @@ export default function SideBar() {
     const [activeKey, setActiveKey] = useState(CONTACT_KEY)
     const [modalOpen, setModalOpen] = useState(false)
     const isConversationTabOpen = activeKey === CONVERSATION_KEY
+    const {user} = useUserContext()
 
     function closeModal() {
         setModalOpen(false)
     }
     return (
         <div style = {{width:'250px'}} className = 'd-flex flex-column'>
+            <div className = 'p-2 border-top border-right small'>
+                <span className = 'text-muted'>{user.name}</span>
+            </div>
+
             <Tab.Container activeKey = {activeKey} onSelect = {(key) => {setActiveKey(key)}}>
                 <Nav variant = 'tabs' className = 'justify-content-center'>
                     <Nav.Item>
@@ -36,9 +42,7 @@ export default function SideBar() {
                         <ContactList/>
                     </Tab.Pane>
                 </Tab.Content>
-                <div className = 'p-2 border-top border-right small'>
-                    Your Id: <span className = 'text-muted'>Id</span>
-                </div>
+                
                 <Button className = 'rounded-0' onClick = {() => setModalOpen(true)}>
                     New {isConversationTabOpen ? 'Conversations' : 'Contacts'}
                 </Button>

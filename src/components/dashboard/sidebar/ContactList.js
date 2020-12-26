@@ -1,20 +1,17 @@
 import React from 'react'
 import {ListGroup} from 'react-bootstrap'
-
+import {useUserContext} from '../../../contexts/UserProvider'
 export default function ContactList() {
-    const contacts = [{
-        id: 1, name: 1
-    },{
-        id: 2, name: 2
-    },{
-        id: 3, name: 3
-    }]
+    const {contacts} = useUserContext()
     return (
         <ListGroup variant = "flush">
-            {contacts.map(contact => (
-                <ListGroup.Item key = {contact.id}>
+            {contacts.length > 0 ? contacts.map(contact => (
+                <ListGroup.Item key = {contact._id}>
                     {contact.name}
                 </ListGroup.Item>
-            ))}
-        </ListGroup>    )
+            ))
+            : ''
+        }
+        </ListGroup>            
+        )
 }

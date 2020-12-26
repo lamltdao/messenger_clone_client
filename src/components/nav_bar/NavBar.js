@@ -3,7 +3,8 @@ import LogOut from './LogOut'
 import Searchfield from './Searchfield'
 import UserInfo from './UserInfo'
 import {Row, Col } from 'react-bootstrap'
-export default function Sidebar() {
+
+export default function Navbar() {
     return (
             <Row className = 'mb-3 mt-2'>
                 <Col sm = {6}><Searchfield /></Col>

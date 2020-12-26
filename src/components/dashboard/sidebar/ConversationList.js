@@ -6,7 +6,7 @@ export default function ConversationList() {
     return (
         <ListGroup variant = "flush">
             {
-            conversations.map((conversation, index) => (
+            conversations.length !== 0 && conversations.map((conversation, index) => (
                 <ListGroup.Item 
                     key = {conversation._id}
                     action 
@@ -14,10 +14,11 @@ export default function ConversationList() {
                     active = {conversation._id === selectedConversationId}
                 >
                     {
-                        conversation.users.slice(0,1).map(user => user.name).join(', ')
+                        conversation.name ? conversation.name : conversation.users.slice(0,1).map(user => user.name).join(', ')
                     }
                 </ListGroup.Item>
-            ))}
+            ))
+            }
         </ListGroup>    
         )
 }
