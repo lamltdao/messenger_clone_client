@@ -1,31 +1,27 @@
-import React from 'react'
-import useLocalStorage from '../../hooks/useLocalStorage'
-import axios from 'axios'
-import {AUTH_BASE_URL} from '../../config'
+import React, { useState } from 'react'
 import {Button} from 'react-bootstrap'
+import {useAuthContext} from '../../contexts/AuthProvider'
 
 export default function LogOut() {
-    let [refreshToken, setRefreshToken] = useLocalStorage('refresh_token', null) 
-
-    function logOut(e) {
+    const [logOutMessage, setLogOutMessage] = useState('')
+    const {logOut} = useAuthContext()
+    async function handleClick(e) {
         e.preventDefault()
-        axios({
-            method:'delete',
-            url:AUTH_BASE_URL + '/auth/logout',
-            data: {
-                refreshToken
-            }
-        })
-        .then(data => {
-            console.log(data);
-            setRefreshToken(null)
+        const {status} = await logOut()
+        if(status === 'SUCCESS') {
             window.location.href = '/login'
-        })
-        .catch(err => {
-            console.log(err);
-        })
+        }
+        if(status === 'ERROR') {
+            setLogOutMessage('Unable to log out')
+        }
+        if(status === 'LOADING') {
+            setLogOutMessage('Logging out')
+        }
     }
     return (
-        <Button onClick = {logOut}>Log out</Button>
+        <div>
+            <Button onClick = {handleClick}>Log out</Button>
+            <div>{logOutMessage}</div>
+        </div>
     )
 }

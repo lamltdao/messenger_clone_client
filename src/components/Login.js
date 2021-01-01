@@ -1,38 +1,31 @@
 import React, {useRef, useState} from 'react'
 import {Form, Container, Button} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import axios from 'axios'
-import {AUTH_BASE_URL} from '../config'
-import useLocalStorage from '../hooks/useLocalStorage'
-
+import {useAuthContext} from '../contexts/AuthProvider'
 
 export default function Login() {
     const emailRef = useRef()
     const passwordRef = useRef()
-    const [accessToken, setAccessToken] = useLocalStorage('access_token',null)
-    const [refreshToken, setRefreshToken] = useLocalStorage('refresh_token',null)
-    const [errMess, setErrMess] = useState('')
+    let [loginMessage, setLoginMessage] = useState('')
 
-    function handleSubmit(e) {
+    const {login} = useAuthContext()
+    
+    async function handleSubmit(e) {
         e.preventDefault()
         const body = {
             email: emailRef.current.value,
             password: passwordRef.current.value
         }
-        axios({
-			method:'post',
-			url:AUTH_BASE_URL +'/auth/login',
-			data: body
-		})
-		.then(data=>{
-            const {accessToken, refreshToken} = data.data
-            setAccessToken(accessToken)
-            setRefreshToken(refreshToken)
+        const {status} = await login(body)
+        if(status === 'SUCCESS') {
             window.location.href = '/'
-		})
-		.catch(err=>{
-			setErrMess('Failed to log in')
-        })    
+        }
+        if(status === 'ERROR') {
+            setLoginMessage('Failed to login')
+        }
+        if(status === 'LOADING') {
+            setLoginMessage('Logging in...')
+        }
     }
 
     return (
@@ -51,7 +44,7 @@ export default function Login() {
                     <Button type = 'submit'>Login</Button>
                 </Form>
                 <div>
-                    {errMess}
+                    {loginMessage}
                 </div>
                 <Link to = '/register'>Register</Link>
             </Container>

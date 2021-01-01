@@ -57,10 +57,46 @@ export function AuthProvider({children}) {
     }
 
     // login 
-
+    async function login({email, password}) {
+        let status = 'LOADING'
+        await axios({
+			method:'post',
+			url:AUTH_BASE_URL +'/auth/login',
+			data: {email, password}
+        })
+        .then(data => {
+            const {accessToken, refreshToken} = data.data
+            setAccessToken(accessToken)
+            setRefreshToken(refreshToken)
+            status = 'SUCCESS'
+        })
+		.catch(err => {
+			status = 'ERROR'
+        })   
+        return {status} 
+    }
     // logout
-
+    async function logOut() {
+        let status = 'LOADING'
+        await axios({
+            method:'delete',
+            url:AUTH_BASE_URL + '/auth/logout',
+            data: {
+                refreshToken
+            }
+        })
+        .then(data => {
+            status = 'SUCCESS'
+            setRefreshToken(null)
+        })
+        .catch(err => {
+            status = 'ERROR'
+        })
+        return {status}
+    }
     const value = {
+       login,
+       logOut,
        getAccessToken,
        authFetch
     }

@@ -10,7 +10,7 @@ const CONVERSATION_KEY = 'conversation'
 const CONTACT_KEY = 'contact'
 
 export default function SideBar() {
-    const [activeKey, setActiveKey] = useState(CONTACT_KEY)
+    const [activeKey, setActiveKey] = useState(CONVERSATION_KEY)
     const [modalOpen, setModalOpen] = useState(false)
     const isConversationTabOpen = activeKey === CONVERSATION_KEY
     const {user} = useUserContext()
@@ -19,7 +19,7 @@ export default function SideBar() {
         setModalOpen(false)
     }
     return (
-        <div style = {{width:'250px'}} className = 'd-flex flex-column'>
+        <div style = {{width:'250px', height: '100%'}} className = 'd-flex flex-column'>
             <div className = 'p-2 border-top border-right small'>
                 <span className = 'text-muted'>{user.name}</span>
             </div>
