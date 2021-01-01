@@ -1,9 +1,13 @@
 import React, {useState, useCallback} from 'react'
 import {useConversations} from '../../contexts/ConversationProvider'
 import {useUserContext} from '../../contexts/UserProvider'
+import {useThemeContext} from '../../contexts/ThemeProvider'
 
 import { Container, Row, Col, Form, InputGroup, Button } from 'react-bootstrap'
 export default function ConversationDetail() {
+    // set theme
+    const {theme} = useThemeContext()
+    
     // get conversation info
     const {sendMessage, selectedConversationId, conversations} = useConversations()
     const conversation = selectedConversationId === null ? null : conversations.find(conversation => conversation._id === selectedConversationId)
@@ -33,7 +37,7 @@ export default function ConversationDetail() {
     return (
         conversation ? 
 
-        <div className = 'd-flex flex-column flex-grow-1' style = {{height: '100%'}}>
+        <div className = {`d-flex flex-column flex-grow-1 ${theme.backgroundColor}`} style = {{height: '100%'}}>
             <div className = 'flex-grow-1 overflow-auto'>
                 <div className = 'd-flex flex-column align-items-start justify-content-end px-3'>
                     { 
@@ -52,7 +56,7 @@ export default function ConversationDetail() {
                                     // set color of message box and sender's name depending on the sender (user or his/her contacts)
                                 }
                                 <div className = {`rounded px-2 py-1 
-                                                    ${isSentFromMe ? 'bg-primary text-white' : 'border'}`}
+                                                    ${isSentFromMe ? theme.myTextBoxColor : theme.otherTextBoxColor}`}
                                 >
                                     {text}
                                 </div>
@@ -74,10 +78,11 @@ export default function ConversationDetail() {
                         required 
                         value = {text}
                         onChange = {e => setText(e.target.value)}
-                        style = {{height: '75px', resize: 'none'}}    
+                        style = {{height: '75px', resize: 'none'}} 
+                        className = {`${theme.textAreaColor}`}   
                         />
                         <InputGroup.Append>
-                            <Button type = 'submit'>Send</Button>
+                            <Button type = 'submit' className = {`${theme.buttonColor}`}>Send</Button>
                         </InputGroup.Append>
                     </InputGroup>
                 </Form.Group>
