@@ -2,30 +2,33 @@ import React, {Children, useCallback, useContext, useState} from 'react'
 
 const ThemeContext = React.createContext()
 
-export const themeOptions = {
-    LIGHT: {
+export const themeOptions = [
+    {
+        name: 'Light',
         backgroundColor: 'bg-light',
         myTextBoxColor: 'bg-primary text-light',
-        otherTextBoxColor:'bg-secondary text-dark',
+        otherTextBoxColor:'bg-secondary text-light',
         buttonColor:'bg-primary text-light',
         textAreaColor: 'bg-light'
     },
-    DARK: {
+    {
+        name: 'Dark',
         backgroundColor: 'bg-dark',
         myTextBoxColor: 'bg-danger text-light',
         otherTextBoxColor: 'bg-secondary text-light',
         buttonColor:'bg-dark text-light',
         textAreaColor: 'bg-secondary'
     }
-}
+]
 export function useThemeContext() {
     return useContext(ThemeContext)
 }
 export function ThemeProvider({children}) {
-    const [theme, setTheme] = useState(themeOptions.LIGHT)
+    const [theme, setTheme] = useState(themeOptions[0])
     
     const value = {
-        theme
+        theme,
+        setTheme
     }
     return (
         <ThemeContext.Provider value = {value}>

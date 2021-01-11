@@ -21,7 +21,7 @@ export function useConversations() {
 } 
 
 export function ConversationProvider({children}) {
-    const socket = useSocket()
+    const {chatSocket} = useSocket()
     const {authFetch} = useAuthContext()
     
     // get all conversations' info from db
@@ -70,34 +70,48 @@ export function ConversationProvider({children}) {
         })
     }
 
-    // function to send a message from user to recipients
-    function sendMessage(conversationId, messageBody) {
-        socket.emit('send-message', {conversationId, messageBody})
-    }    
-
     // function to handle message sent from others
     const updateConversation = useCallback(({conversationId, userId, messageBody}) => {
-        console.log("Receive message ", messageBody )
-        setConversations((prevConversations) => {
-            const conversation = prevConversations.find(conversation => conversation._id === conversationId)
-            const sender = conversation.users.find(user => user._id === userId)
-            conversation.messages.push(messageResponseModel(sender._id, sender.name, messageBody))
-            return prevConversations
+        setConversations(prevConversations => {
+            // deep-clone the previous state so that a re-render is triggered
+            const newConversations = JSON.parse(JSON.stringify(prevConversations))
+            newConversations.map((conversation) => {
+                if(conversation._id === conversationId) {
+                    const sender = conversation.users.find(user => user._id === userId)
+                    conversation.messages.push({
+                        user: {
+                            _id: sender._id,
+                            name: sender.name
+                        },
+                        messageBody
+                    })                
+                }
+                return conversation
+            })
+            return newConversations
         })
     }, [setConversations])
+
+
+    // function to send a message from user to recipients
+    function sendMessage(conversationId, userId, messageBody) {
+        chatSocket.emit('send-message', {conversationId, userId, messageBody})
+        updateConversation({conversationId, userId, messageBody})
+    }       
     
     useEffect(() => {
-        if(socket == null) {
+        if(chatSocket == null) {
             return 
         }
-        socket.on('push-message', updateConversation)
-        return () => socket.off('push-message')
-    }, [socket, updateConversation])
+        chatSocket.on('push-message', updateConversation)
+        return () => {
+            chatSocket.off('push-message')
+        } 
+    }
+    , [chatSocket, updateConversation]
+    )
    
     // function to load more messages from db
-    function loadMessages() {
-        
-    }
 
 
     const value = {

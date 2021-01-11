@@ -1,9 +1,10 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './Login'
 import Main from './Main'
 import Register from './Register'
+import VideoCall from './VideoCall'
 import HomeSecuredRoute from '../routes/HomeSecuredRoute'
 import LoginSecuredRoute from '../routes/LoginSecuredRoute'
-import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   BrowserRouter as Router,
   Switch, 
@@ -15,6 +16,7 @@ import {SocketProvider} from '../contexts/SocketProvider'
 import {AuthProvider} from '../contexts/AuthProvider'
 import {UserProvider} from '../contexts/UserProvider'
 import {ThemeProvider} from '../contexts/ThemeProvider'
+import {VideoCallProvider} from '../contexts/VideoCallProvider'
 
 function App() {
   return (
@@ -23,24 +25,29 @@ function App() {
           <UserProvider>
             <SocketProvider>
               <ConversationProvider>
-                <ThemeProvider>
-                  <Router>
-                    <Switch>
-                      <LoginSecuredRoute exact path = '/login'>
-                        <Login/>
-                      </LoginSecuredRoute>
+                <VideoCallProvider>
+                  <ThemeProvider>
+                    <Router>
+                      <Switch>
+                        <LoginSecuredRoute exact path = '/login'>
+                          <Login/>
+                        </LoginSecuredRoute>
 
-                      <Route exact path = '/register'>
-                        <Register/>
-                      </Route>
+                        <Route exact path = '/register'>
+                          <Register/>
+                        </Route>
 
-                      <HomeSecuredRoute exact path = '/'>
-                        <Main/>
-                      </HomeSecuredRoute>
+                        <HomeSecuredRoute exact path = '/'>
+                          <Main/>
+                        </HomeSecuredRoute>
 
-                    </Switch>
-                  </Router>      
-                </ThemeProvider>
+                        <Route exact path = '/video-call/:conversationId'>
+                          <VideoCall/>
+                        </Route>
+                      </Switch>
+                    </Router>      
+                  </ThemeProvider>
+                </VideoCallProvider>
               </ConversationProvider>        
             </SocketProvider>
           </UserProvider>

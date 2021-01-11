@@ -1,24 +1,25 @@
 import React, {useState, useCallback} from 'react'
+import {CLIENT_BASE_URL} from '../../config'
+import {useThemeContext, themeOptions} from '../../contexts/ThemeProvider'
+import {Form, InputGroup, Button, DropdownButton, Dropdown } from 'react-bootstrap'
 import {useConversations} from '../../contexts/ConversationProvider'
 import {useUserContext} from '../../contexts/UserProvider'
-import {useThemeContext} from '../../contexts/ThemeProvider'
+import {useVideoCallContext} from '../../contexts/VideoCallProvider'
 
-import { Container, Row, Col, Form, InputGroup, Button } from 'react-bootstrap'
 export default function ConversationDetail() {
     // set theme
-    const {theme} = useThemeContext()
+    const {theme, setTheme} = useThemeContext()
     
     // get conversation info
     const {sendMessage, selectedConversationId, conversations} = useConversations()
     const conversation = selectedConversationId === null ? null : conversations.find(conversation => conversation._id === selectedConversationId)
-
     // get user info 
-    const {user, contacts} = useUserContext()
+    const {user} = useUserContext()
     const userId = user._id
 
     // 
     const [text, setText] = useState('')
-    
+
     // scroll to last message sent
     const setRef = useCallback(node => {
         if(node) {
@@ -30,14 +31,37 @@ export default function ConversationDetail() {
     function handleSubmit(e) {
         e.preventDefault()
         if(text !== '') {
-            sendMessage(selectedConversationId, text)
+            sendMessage(selectedConversationId, userId, text)
+            setText('') 
         }
     }
-
+    // join a video call
+    function handleClick(e) {
+        e.preventDefault()
+        window.open(CLIENT_BASE_URL + `/video-call/${selectedConversationId}`)    
+    }
     return (
         conversation ? 
 
         <div className = {`d-flex flex-column flex-grow-1 ${theme.backgroundColor}`} style = {{height: '100%'}}>
+            <div className = 'd-flex flex-row'>
+                <DropdownButton title = 'Choose your theme'>
+                    {
+                        themeOptions.map((theme, index) => {
+                            return (
+                            <Dropdown.Item key = {index} onClick = {() => {setTheme(theme)}}>{theme.name}</Dropdown.Item>                            )
+                        })
+                    }
+                </DropdownButton>
+                {/* <Link to = {{               
+                    pathname: `/video-call/${selectedConversationId}`,
+                    state: {
+
+                    }
+                }} target = '_blank' >Video Call</Link> */}
+                <Button onClick = {handleClick}>Video Call</Button>
+            </div>
+            
             <div className = 'flex-grow-1 overflow-auto'>
                 <div className = 'd-flex flex-column align-items-start justify-content-end px-3'>
                     { 
