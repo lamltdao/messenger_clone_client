@@ -1,4 +1,4 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState} from 'react'
 import {Link} from 'react-router-dom'
 import {Form, Container, Button} from 'react-bootstrap'
 import axios from 'axios'
@@ -8,22 +8,30 @@ export default function Register() {
     const emailRef = useRef()
     const passwordRef = useRef()
     const nameRef = useRef()
-    
-    function handleSubmit(e) {
+    let [errorMessage, setErrorMessage] = useState('')
+    async function handleSubmit(e) {
         e.preventDefault()
         const body = {
             name: nameRef.current.value,
             email: emailRef.current.value,
             password: passwordRef.current.value
         }
-        axios({
+        await axios({
 			method:'post',
 			url:AUTH_BASE_URL +'/auth/register',
-			data: body
+            data: body,
 		})
 		.then(data=>{
+            setErrorMessage('Successfully register')
 		})
 		.catch(err=>{
+            const statusCode = err.response.status
+            if(statusCode == 409) {
+                setErrorMessage('Email already used')
+            }
+            else {
+                setErrorMessage('Failed to register')
+            }
         })    
     }
 
@@ -48,7 +56,10 @@ export default function Register() {
                     <Button type = 'submit'>Register</Button>
                 </Form>
                 <Link to = '/login'>Login</Link>
-            </Container>        
+                <div>
+                    {errorMessage}    
+                </div>  
+            </Container>      
         </div>
     )
 }

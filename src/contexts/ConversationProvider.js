@@ -3,7 +3,8 @@ import axios from 'axios'
 import {CONVERSATION_BASE_URL} from '../config'
 import {useSocket} from './SocketProvider'
 import {useAuthContext} from './AuthProvider'
-import useLocalStorage from '../hooks/useLocalStorage'
+import {useUserContext} from './UserProvider'
+
 const ConversationContext = React.createContext()
 
 export const messageResponseModel = (_id, name, messageBody) => {
@@ -23,7 +24,8 @@ export function useConversations() {
 export function ConversationProvider({children}) {
     const {chatSocket} = useSocket()
     const {authFetch} = useAuthContext()
-    
+    const {getUserInfoById} = useUserContext()
+
     // get all conversations' info from db
     let [conversations, setConversations] = useState([])
     useEffect(() => {
@@ -44,7 +46,7 @@ export function ConversationProvider({children}) {
     },[])
 
     // function to select a conversation by id
-    let [selectedConversationId, setSelectedConversationId] = useLocalStorage('selectedConversationId',null)
+    let [selectedConversationId, setSelectedConversationId] = useState(null)
 
         
     // function to create a new conversation
@@ -53,42 +55,61 @@ export function ConversationProvider({children}) {
             messages: [],
             users: [...recipientIds]
         }
-        axios({
+        authFetch({
             method: 'post',
             url: CONVERSATION_BASE_URL + '/conversation',
             data: body
         })
         .then(data => {
-            const conversation = data.data
+            const newConversation = data.data
             setConversations(prevConversations => {
-                prevConversations.push(conversation)
-                return prevConversations
+                return [...prevConversations, newConversation]
             })
+            setSelectedConversationId(newConversation._id)
         })
         .catch(err => {
-
+            console.log(err);
         })
     }
 
     // function to handle message sent from others
     const updateConversation = useCallback(({conversationId, userId, messageBody}) => {
         setConversations(prevConversations => {
+            let numUnmatchedConversations = 0
+            // if # of unmatched conversations = # of conversations => message from a new conversation
+            let isNewConversation = numUnmatchedConversations === prevConversations.length
             // deep-clone the previous state so that a re-render is triggered
-            const newConversations = JSON.parse(JSON.stringify(prevConversations))
-            newConversations.map((conversation) => {
+            const cloneConversations = JSON.parse(JSON.stringify(prevConversations))
+            // const cloneConversations = [...prevConversations]
+            cloneConversations.map((conversation) => {
+                // if message is from an existing conversation
                 if(conversation._id === conversationId) {
-                    const sender = conversation.users.find(user => user._id === userId)
+                    const sender = getUserInfoById(userId)
                     conversation.messages.push({
-                        user: {
-                            _id: sender._id,
-                            name: sender.name
-                        },
+                        user: sender._id,
                         messageBody
                     })                
                 }
+                else {
+                    ++numUnmatchedConversations
+                }
                 return conversation
             })
-            return newConversations
+
+            if(isNewConversation) {
+                authFetch({
+                    method: 'get',
+                    url: CONVERSATION_BASE_URL + `/conversation/${conversationId}` ,
+                })
+                .then(data => {
+                    const conversation = data.data
+                    cloneConversations.push(conversation)
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+            }
+            return cloneConversations
         })
     }, [setConversations])
 

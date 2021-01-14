@@ -7,6 +7,7 @@ export function useUserContext() {
     return useContext(UserContext)
 }
 export function UserProvider({children}) {
+    // Each user has props: _id, name, email
     const {authFetch} = useAuthContext()
     const [user, setUser] = useState({})
     const [contacts, setContacts] = useState([])
@@ -37,9 +38,22 @@ export function UserProvider({children}) {
         })
     },[setContacts])
 
+    function getUserInfoById(contactId) {
+        const userInfo = [user, ...contacts].find(contact => contact._id === contactId)
+        // if no contact is found
+        if(userInfo === undefined) return null
+        else return userInfo
+    }
+
+    function getAllUsers() {
+        return [user, ...contacts]
+    }
+
     const value = {
         user,
-        contacts
+        contacts,
+        getUserInfoById,
+        getAllUsers
     }
     return (
         <UserContext.Provider value = {value}>

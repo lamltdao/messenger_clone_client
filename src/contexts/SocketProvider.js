@@ -23,7 +23,6 @@ export function SocketProvider({children}) {
                 }
             }        
         )
-        console.log(newChatSocket);
         setChatSocket(newChatSocket)
        return () => {
             if(newChatSocket) newChatSocket.close()

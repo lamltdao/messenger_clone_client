@@ -4,8 +4,15 @@ import {useConversations} from '../../../contexts/ConversationProvider'
 import {useUserContext} from '../../../contexts/UserProvider'
 export default function ConversationList() {
     const {conversations, selectConversationById, selectedConversationId} = useConversations()
-    const {user} = useUserContext()
+    const {user, getUserInfoById} = useUserContext()
     const userId = user._id
+    
+    function getDefaultConversationName(userIds) {
+        const contactNames = userIds.filter(id => id !== userId).map(id => {
+            return getUserInfoById(id).name
+        })
+        return ['You', ...contactNames].join(', ')
+    }
     return (
         <ListGroup variant = "flush">
             {
@@ -17,7 +24,7 @@ export default function ConversationList() {
                     active = {conversation._id === selectedConversationId}
                 >
                     {
-                        conversation.name ? conversation.name : conversation.users.filter(user => user._id !== userId).map(user => user.name).join(', ')
+                        conversation.name ? conversation.name : getDefaultConversationName(conversation.users)
                     }
                 </ListGroup.Item>
             ))

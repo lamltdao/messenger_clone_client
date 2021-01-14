@@ -14,12 +14,12 @@ export default function ConversationDetail() {
     const {sendMessage, selectedConversationId, conversations} = useConversations()
     const conversation = selectedConversationId === null ? null : conversations.find(conversation => conversation._id === selectedConversationId)
     // get user info 
-    const {user} = useUserContext()
+    const {user, getUserInfoById} = useUserContext()
     const userId = user._id
 
     // 
     const [text, setText] = useState('')
-
+    console.log(conversation);
     // scroll to last message sent
     const setRef = useCallback(node => {
         if(node) {
@@ -53,12 +53,6 @@ export default function ConversationDetail() {
                         })
                     }
                 </DropdownButton>
-                {/* <Link to = {{               
-                    pathname: `/video-call/${selectedConversationId}`,
-                    state: {
-
-                    }
-                }} target = '_blank' >Video Call</Link> */}
                 <Button onClick = {handleClick}>Video Call</Button>
             </div>
             
@@ -67,9 +61,9 @@ export default function ConversationDetail() {
                     { 
                     conversation.messages.map((message, index) => {
                         const lastMessage = conversation.messages.length - 1 === index
-                        const isSentFromMe = message.user._id === userId
-                        const senderName = message.user.name
-                        const text = message.messageBody
+                        const senderInfo = getUserInfoById(message.user)
+                        const isSentFromMe = senderInfo._id === userId
+                        const {messageBody} = message
                         return (
                             <div 
                                 ref = {lastMessage ? setRef : null}
@@ -82,11 +76,11 @@ export default function ConversationDetail() {
                                 <div className = {`rounded px-2 py-1 
                                                     ${isSentFromMe ? theme.myTextBoxColor : theme.otherTextBoxColor}`}
                                 >
-                                    {text}
+                                    {messageBody}
                                 </div>
 
                                 <div className = {`text-muted small ${isSentFromMe ? 'text-right' : ''}`}>
-                                    {isSentFromMe ? 'You' : senderName}
+                                    {isSentFromMe ? 'You' : senderInfo.name}
                                 </div>
                             </div>
                         )
