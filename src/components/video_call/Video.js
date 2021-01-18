@@ -14,7 +14,7 @@ export default function Video(props) {
         else return    
     }, [props.stream])
     return (
-        <video ref = {videoRef}>
+        <video autoplay="true" muted="muted" ref = {videoRef} style = {{height: '100%'}}>
             
         </video>
     )

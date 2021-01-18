@@ -14,12 +14,11 @@ export default function ConversationDetail() {
     const {sendMessage, selectedConversationId, conversations} = useConversations()
     const conversation = selectedConversationId === null ? null : conversations.find(conversation => conversation._id === selectedConversationId)
     // get user info 
-    const {user, getUserInfoById} = useUserContext()
+    const {user, contacts} = useUserContext()
     const userId = user._id
-
     // 
     const [text, setText] = useState('')
-    console.log(conversation);
+
     // scroll to last message sent
     const setRef = useCallback(node => {
         if(node) {
@@ -31,7 +30,7 @@ export default function ConversationDetail() {
     function handleSubmit(e) {
         e.preventDefault()
         if(text !== '') {
-            sendMessage(selectedConversationId, userId, text)
+            sendMessage(selectedConversationId, user, text)
             setText('') 
         }
     }
@@ -60,8 +59,9 @@ export default function ConversationDetail() {
                 <div className = 'd-flex flex-column align-items-start justify-content-end px-3'>
                     { 
                     conversation.messages.map((message, index) => {
+                        console.log(message);
                         const lastMessage = conversation.messages.length - 1 === index
-                        const senderInfo = getUserInfoById(message.user)
+                        const senderInfo = message.user
                         const isSentFromMe = senderInfo._id === userId
                         const {messageBody} = message
                         return (

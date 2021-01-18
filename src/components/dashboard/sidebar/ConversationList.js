@@ -1,18 +1,18 @@
-import React from 'react'
+import React, {useCallback} from 'react'
 import {ListGroup} from 'react-bootstrap'
 import {useConversations} from '../../../contexts/ConversationProvider'
 import {useUserContext} from '../../../contexts/UserProvider'
 export default function ConversationList() {
     const {conversations, selectConversationById, selectedConversationId} = useConversations()
-    const {user, getUserInfoById} = useUserContext()
+    const {user} = useUserContext()
     const userId = user._id
     
-    function getDefaultConversationName(userIds) {
-        const contactNames = userIds.filter(id => id !== userId).map(id => {
-            return getUserInfoById(id).name
+    const getDefaultConversationName = useCallback((users) => {
+        const contactNames = users.filter(user => user._id !== userId).map(user => {
+            return user.name
         })
         return ['You', ...contactNames].join(', ')
-    }
+    },[userId])
     return (
         <ListGroup variant = "flush">
             {

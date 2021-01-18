@@ -7,28 +7,29 @@ import {useUserContext} from './UserProvider'
 
 const ConversationContext = React.createContext()
 
-export const messageResponseModel = (_id, name, messageBody) => {
-    return {
-        user: {
-            _id,
-            name
-        },
-        messageBody
-    }
-}
+// export const messageResponseModel = (_id, name, messageBody) => {
+//     return {
+//         user: {
+//             _id,
+//             name
+//         },
+//         messageBody
+//     }
+// }
 
 export function useConversations() {
     return useContext(ConversationContext)
 } 
 
 export function ConversationProvider({children}) {
+    console.log('conversation render');
     const {chatSocket} = useSocket()
     const {authFetch} = useAuthContext()
-    const {getUserInfoById} = useUserContext()
-
+    const userInfo = useUserContext().user
     // get all conversations' info from db
     let [conversations, setConversations] = useState([])
     useEffect(() => {
+        console.log('fetch conversation');
         authFetch({
             method: 'get',
             url: CONVERSATION_BASE_URL + '/conversation',
@@ -37,6 +38,7 @@ export function ConversationProvider({children}) {
             }
         })
         .then(data => {
+            console.log('conversation fetched');
             const conversations = data.data
             setConversations(conversations)
         })
@@ -73,20 +75,18 @@ export function ConversationProvider({children}) {
     }
 
     // function to handle message sent from others
-    const updateConversation = useCallback(({conversationId, userId, messageBody}) => {
+    const updateConversation = useCallback(({conversationId, user, messageBody}) => {
         setConversations(prevConversations => {
             let numUnmatchedConversations = 0
             // if # of unmatched conversations = # of conversations => message from a new conversation
-            let isNewConversation = numUnmatchedConversations === prevConversations.length
             // deep-clone the previous state so that a re-render is triggered
             const cloneConversations = JSON.parse(JSON.stringify(prevConversations))
-            // const cloneConversations = [...prevConversations]
             cloneConversations.map((conversation) => {
                 // if message is from an existing conversation
                 if(conversation._id === conversationId) {
-                    const sender = getUserInfoById(userId)
+                    console.log(user);
                     conversation.messages.push({
-                        user: sender._id,
+                        user,
                         messageBody
                     })                
                 }
@@ -95,19 +95,17 @@ export function ConversationProvider({children}) {
                 }
                 return conversation
             })
-
+            let isNewConversation = numUnmatchedConversations === prevConversations.length
             if(isNewConversation) {
-                authFetch({
-                    method: 'get',
-                    url: CONVERSATION_BASE_URL + `/conversation/${conversationId}` ,
-                })
-                .then(data => {
-                    const conversation = data.data
-                    cloneConversations.push(conversation)
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+                const newConversation = {
+                    _id: conversationId,
+                    users: [user, userInfo],
+                    messages: [{
+                        user,
+                        messageBody
+                    }]
+                }
+                cloneConversations.push(newConversation)
             }
             return cloneConversations
         })
@@ -115,15 +113,17 @@ export function ConversationProvider({children}) {
 
 
     // function to send a message from user to recipients
-    function sendMessage(conversationId, userId, messageBody) {
-        chatSocket.emit('send-message', {conversationId, userId, messageBody})
-        updateConversation({conversationId, userId, messageBody})
+    function sendMessage(conversationId, user, messageBody) {
+        chatSocket.emit('send-message', {conversationId, user, messageBody})
+        updateConversation({conversationId, user, messageBody})
     }       
     
+    // update the conversation when receiving a message
     useEffect(() => {
         if(chatSocket == null) {
             return 
         }
+        
         chatSocket.on('push-message', updateConversation)
         return () => {
             chatSocket.off('push-message')
@@ -131,9 +131,6 @@ export function ConversationProvider({children}) {
     }
     , [chatSocket, updateConversation]
     )
-   
-    // function to load more messages from db
-
 
     const value = {
         conversations,

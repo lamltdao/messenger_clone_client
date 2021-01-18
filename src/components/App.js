@@ -1,8 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+import { faVideo, faVideoSlash, faMicrophone, faMicrophoneSlash, faUsers, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import Login from './Login'
 import Main from './Main'
 import Register from './Register'
-import VideoCall from './VideoCall'
+import VideoCall from './video_call/VideoCall'
 import HomeSecuredRoute from '../routes/HomeSecuredRoute'
 import LoginSecuredRoute from '../routes/LoginSecuredRoute'
 import {
@@ -17,6 +20,8 @@ import {AuthProvider} from '../contexts/AuthProvider'
 import {UserProvider} from '../contexts/UserProvider'
 import {ThemeProvider} from '../contexts/ThemeProvider'
 import {VideoCallProvider} from '../contexts/VideoCallProvider'
+
+library.add(fab, faVideo, faVideoSlash, faMicrophone, faMicrophoneSlash,faUsers, faDoorOpen)
 
 function App() {
   return (

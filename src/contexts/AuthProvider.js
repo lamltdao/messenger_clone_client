@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useRef} from 'react'
 import {AUTH_BASE_URL} from '../config'
 import axios from 'axios'
 import useLocalStorage from '../hooks/useLocalStorage'
@@ -8,7 +8,7 @@ const isTokenExpired = (token) => {
     if(!token) return true
     const decode = JSON.parse(atob(token.split('.')[1]))
     const expiredDateInSec = decode.exp ? decode.exp : null
-    return expiredDateInSec ? expiredDateInSec * 1000 < Date.now() : true
+    return expiredDateInSec ? expiredDateInSec * 1000 < Date.now() - 2000 : true
 }
 
 const AuthContext = React.createContext()
@@ -19,12 +19,12 @@ export function AuthProvider({children}) {
     
     const [accessToken, setAccessToken] = useLocalStorage('access_token', null)
     const [refreshToken, setRefreshToken] = useLocalStorage('refresh_token', null)
-    const [isTokenUpdating, setIsTokenUpdating] = useState(false)
+    const isTokenUpdating = useRef(false)
     // get accessToken
     async function getAccessToken() {
         if(!accessToken) return null
-        if(!isTokenUpdating && isTokenExpired(accessToken)) {
-            setIsTokenUpdating(true)
+        if(!isTokenUpdating.current && isTokenExpired(accessToken)) {
+            isTokenUpdating.current = true
             await axios({
                 method: 'post',
                 url: AUTH_BASE_URL + '/auth/token',
@@ -39,7 +39,7 @@ export function AuthProvider({children}) {
             .catch(err => {
                 setAccessToken(null)
             })
-            setIsTokenUpdating(false)
+            isTokenUpdating.current = false
             return accessToken
         }
         return accessToken
