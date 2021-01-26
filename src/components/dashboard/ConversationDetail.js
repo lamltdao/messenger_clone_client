@@ -59,7 +59,6 @@ export default function ConversationDetail() {
                 <div className = 'd-flex flex-column align-items-start justify-content-end px-3'>
                     { 
                     conversation.messages.map((message, index) => {
-                        console.log(message);
                         const lastMessage = conversation.messages.length - 1 === index
                         const senderInfo = message.user
                         const isSentFromMe = senderInfo._id === userId

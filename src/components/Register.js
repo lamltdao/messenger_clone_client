@@ -26,7 +26,7 @@ export default function Register() {
 		})
 		.catch(err=>{
             const statusCode = err.response.status
-            if(statusCode == 409) {
+            if(statusCode === 409) {
                 setErrorMessage('Email already used')
             }
             else {

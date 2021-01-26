@@ -20,17 +20,23 @@ const ControlButton = ({iconName, text, classAtr, ...otherAtr}) => {
 }
 export default function VideoCall() {
   const { streams, joinCall } = useVideoCallContext();
+  const [myStream, ...otherStreams] = streams
   const { user } = useUserContext();
   const { isVideoCallSocketConnected, setIsInitVideoCallSocket } = useSocket();
-  const [videoIcon, setVideoIcon] = useState("video");
-  const [microphoneIcon, setMicrophoneIcon] = useState("microphone");
-
-  function muteAndUnmute() {
-
+  const [isMute, setIsMute] = useState(true)
+  const [isVideoStop, setIsVideoStop] = useState(false)
+  function muteAndUnmute(e) {
+    e.preventDefault()
+    setIsMute((isMute) => {
+      return !isMute
+    })
   }
 
-  function playAndStopVideo() {
-
+  function playAndStopVideo(e) {
+    e.preventDefault()
+    setIsVideoStop((isVideoStop) => {
+      return !isVideoStop
+    })
   }
 
   function viewParticipants() {
@@ -38,7 +44,7 @@ export default function VideoCall() {
   }
 
   function leaveCall() {
-
+    window.close()
   }
 
   useEffect(() => {
@@ -50,23 +56,24 @@ export default function VideoCall() {
 
   return (
     <Container className ="d-flex flex-column">
-      <Row className="d-flex bg-secondary mb-3">
-          <div className = 'd-flex justify-content-center align-items-center' style = {{height: '90vh'}}>
-            {streams.map((stream, index) => {
-              return <Video key={index} stream={stream} />;
+      <Row className="d-flex mb-3">
+          <div className = 'd-flex justify-content-center py-3' style = {{height: '90vh'}}>
+            {otherStreams.length > 0 && otherStreams.map((stream, index) => {
+              return <Video key={index} stream={stream}/>;
             })}
+          <Video stream={myStream} muted = 'true' isMute = {isMute} isVideoStop = {isVideoStop} />
           </div>
       </Row>
       <Row className="d-flex bg-dark text-white">
           <ControlButton
-            iconName = {microphoneIcon}
-            text = 'Mute'
+            iconName = {isMute ? 'microphone-slash' : 'microphone'}
+            text = {isMute ? 'Unmute' : 'Mute'}
             onClick = {muteAndUnmute}
           />
 
           <ControlButton
-            iconName = {videoIcon}
-            text = 'Stop video'
+            iconName = {isVideoStop ? 'video-slash' : 'video'}
+            text = {isVideoStop ? 'Play Video' : 'Stop Video'}
             onClick = {playAndStopVideo}
           />
         

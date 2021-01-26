@@ -18,13 +18,12 @@ export function VideoCallProvider({children}) {
     const addStream = useCallback((stream, userId) => {
         setStreams(prevStreams => {
             const cloneStreams = [...prevStreams]
-            // // check if stream has already existed in the array
-            // const index = cloneStreams.findIndex(stream => stream.userId === userId)
-            // // remove the stream if it exists in advance
-            // if(index === -1) {
-            //     cloneStreams.push({stream, userId})
-            // }
-            cloneStreams.push({stream, userId})
+            // check if stream has already existed in the array
+            const index = cloneStreams.findIndex(stream => stream.userId === userId)
+            // remove the stream if it exists in advance
+            if(index === -1) {
+                cloneStreams.push({stream, userId})
+            }
             return cloneStreams
         })   
     }, [setStreams])
@@ -41,12 +40,11 @@ export function VideoCallProvider({children}) {
         peerRef.current = new Peer()
         // join call when a peer Object is created
         peerRef.current.on('open', peerId => {
-            console.log('peer connected');
             videoCallSocket.emit('join-call', {conversationId: selectedConversationId, userId, peerId})
         })
         navigator.mediaDevices.getUserMedia({
             video: true,
-            audio: true
+            audio: false
         }).then(myStream => {
             addStream(myStream, user._id)
 
@@ -62,7 +60,9 @@ export function VideoCallProvider({children}) {
                 
             })        
         })        
-        
+        .catch(err => {
+
+        })
         // // notify other users 
         // videoCallSocket.emit('calling', {conversationId: selectedConversationId, userId})
     }
