@@ -52,7 +52,7 @@ export default function ConversationDetail() {
                         })
                     }
                 </DropdownButton>
-                <Button onClick = {handleClick}>Video Call</Button>
+                <Button onClick = {handleClick} disabled>Video Call</Button>
             </div>
             
             <div className = 'flex-grow-1 overflow-auto'>

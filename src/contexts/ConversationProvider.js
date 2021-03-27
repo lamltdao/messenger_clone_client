@@ -7,15 +7,6 @@ import {useUserContext} from './UserProvider'
 
 const ConversationContext = React.createContext()
 
-// export const messageResponseModel = (_id, name, messageBody) => {
-//     return {
-//         user: {
-//             _id,
-//             name
-//         },
-//         messageBody
-//     }
-// }
 
 export function useConversations() {
     return useContext(ConversationContext)
