@@ -8,16 +8,22 @@ export const themeOptions = [
         backgroundColor: 'bg-light',
         myTextBoxColor: 'bg-primary text-light',
         otherTextBoxColor:'bg-secondary text-light',
-        buttonColor:'bg-primary text-light',
-        textAreaColor: 'bg-light'
+        sendButtonColor:'bg-primary text-light',
+        textAreaColor: 'bg-light',
+        commonButtonColor: 'primary', 
+        textColor: 'text-primary',
+        listGroupItem: 'text-primary bg-white border-primary',
     },
     {
         name: 'Dark',
         backgroundColor: 'bg-dark',
         myTextBoxColor: 'bg-danger text-light',
         otherTextBoxColor: 'bg-secondary text-light',
-        buttonColor:'bg-dark text-light',
-        textAreaColor: 'bg-secondary'
+        sendButtonColor:'bg-danger text-light',
+        textAreaColor: 'bg-secondary',
+        commonButtonColor: 'danger',
+        textColor: 'text-danger',
+        listGroupItem: 'text-danger bg-dark border-danger',
     }
 ]
 export function useThemeContext() {

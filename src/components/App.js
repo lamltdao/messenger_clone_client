@@ -26,37 +26,37 @@ library.add(fab, faVideo, faVideoSlash, faMicrophone, faMicrophoneSlash,faUsers,
 function App() {
   return (
     <div className="App">
-        <AuthProvider>
-          <UserProvider>
-            <SocketProvider>
-              <ConversationProvider>
-                <VideoCallProvider>
-                  <ThemeProvider>
-                    <Router>
-                      <Switch>
-                        <LoginSecuredRoute exact path = '/login'>
-                          <Login/>
-                        </LoginSecuredRoute>
+        <ThemeProvider>
+          <AuthProvider>
+            <UserProvider>
+              <SocketProvider>
+                <ConversationProvider>
+                  <VideoCallProvider>
+                      <Router>
+                        <Switch>
+                          <LoginSecuredRoute exact path = '/login'>
+                            <Login/>
+                          </LoginSecuredRoute>
 
-                        <Route exact path = '/register'>
-                          <Register/>
-                        </Route>
+                          <Route exact path = '/register'>
+                            <Register/>
+                          </Route>
 
-                        <HomeSecuredRoute exact path = '/'>
-                          <Main/>
-                        </HomeSecuredRoute>
+                          <HomeSecuredRoute exact path = '/'>
+                            <Main/>
+                          </HomeSecuredRoute>
 
-                        <Route exact path = '/video-call/:conversationId'>
-                          <VideoCall/>
-                        </Route>
-                      </Switch>
-                    </Router>      
-                  </ThemeProvider>
-                </VideoCallProvider>
-              </ConversationProvider>        
-            </SocketProvider>
-          </UserProvider>
-        </AuthProvider>
+                          <Route exact path = '/video-call/:conversationId'>
+                            <VideoCall/>
+                          </Route>
+                        </Switch>
+                      </Router>      
+                  </VideoCallProvider>
+                </ConversationProvider>        
+              </SocketProvider>
+            </UserProvider>
+          </AuthProvider>
+        </ThemeProvider>
     </div>
   );
 }

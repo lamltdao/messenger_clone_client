@@ -13,7 +13,6 @@ export function useConversations() {
 } 
 
 export function ConversationProvider({children}) {
-    console.log('conversation render');
     const {chatSocket} = useSocket()
     const {authFetch} = useAuthContext()
     const userInfo = useUserContext().user
@@ -25,7 +24,7 @@ export function ConversationProvider({children}) {
             method: 'get',
             url: CONVERSATION_BASE_URL + '/conversation',
             params: {
-                messageLimit: 30
+              messageLimit: 30
             }
         })
         .then(data => {
@@ -75,7 +74,6 @@ export function ConversationProvider({children}) {
             cloneConversations.map((conversation) => {
                 // if message is from an existing conversation
                 if(conversation._id === conversationId) {
-                    console.log(user);
                     conversation.messages.push({
                         user,
                         messageBody

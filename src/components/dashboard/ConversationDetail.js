@@ -4,7 +4,6 @@ import {useThemeContext, themeOptions} from '../../contexts/ThemeProvider'
 import {Form, InputGroup, Button, DropdownButton, Dropdown } from 'react-bootstrap'
 import {useConversations} from '../../contexts/ConversationProvider'
 import {useUserContext} from '../../contexts/UserProvider'
-import {useVideoCallContext} from '../../contexts/VideoCallProvider'
 
 export default function ConversationDetail() {
     // set theme
@@ -43,8 +42,8 @@ export default function ConversationDetail() {
         conversation ? 
 
         <div className = {`d-flex flex-column flex-grow-1 ${theme.backgroundColor}`} style = {{height: '100%'}}>
-            <div className = 'd-flex flex-row'>
-                <DropdownButton title = 'Choose your theme'>
+            <div className = 'd-flex flex-row justify-content-end'>
+                <DropdownButton title = 'Choose your theme' className='mr-2' variant={theme.commonButtonColor}>
                     {
                         themeOptions.map((theme, index) => {
                             return (
@@ -52,7 +51,7 @@ export default function ConversationDetail() {
                         })
                     }
                 </DropdownButton>
-                <Button onClick = {handleClick} disabled>Video Call</Button>
+                <Button onClick = {handleClick} className='mr-2' variant={theme.commonButtonColor}>Video Call</Button>
             </div>
             
             <div className = 'flex-grow-1 overflow-auto'>
@@ -99,7 +98,7 @@ export default function ConversationDetail() {
                         className = {`${theme.textAreaColor}`}   
                         />
                         <InputGroup.Append>
-                            <Button type = 'submit' className = {`${theme.buttonColor}`}>Send</Button>
+                            <Button type = 'submit' className = {`${theme.sendButtonColor}`}>Send</Button>
                         </InputGroup.Append>
                     </InputGroup>
                 </Form.Group>

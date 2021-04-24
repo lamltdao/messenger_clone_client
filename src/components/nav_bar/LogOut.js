@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import {Button} from 'react-bootstrap'
 import {useAuthContext} from '../../contexts/AuthProvider'
+import {useThemeContext} from '../../contexts/ThemeProvider'
 
 export default function LogOut() {
     const [logOutMessage, setLogOutMessage] = useState('')
     const {logOut} = useAuthContext()
+    const {theme} = useThemeContext()
+
     async function handleClick(e) {
         e.preventDefault()
         const {status} = await logOut()
@@ -20,7 +23,7 @@ export default function LogOut() {
     }
     return (
         <div>
-            <Button onClick = {handleClick}>Log out</Button>
+            <Button onClick = {handleClick} variant={theme.commonButtonColor}>Log out</Button>
             <div>{logOutMessage}</div>
         </div>
     )
