@@ -19,7 +19,7 @@ export function SocketProvider({ children }) {
   const { user } = useUserContext();
   const userId = user._id;
   useEffect(() => {
-    if (!user) return;
+    if (userId == undefined) return;
     var newChatSocket = io(`${CONVERSATION_BASE_URL}/chat`, {
       query: {
         userId,
