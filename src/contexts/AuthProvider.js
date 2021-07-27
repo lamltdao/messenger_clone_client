@@ -1,5 +1,4 @@
 import React, { useContext, useRef } from "react";
-import { AUTH_BASE_URL } from "../config";
 import axios from "axios";
 import useLocalStorage from "../hooks/useLocalStorage";
 
@@ -28,7 +27,7 @@ export function AuthProvider({ children }) {
       isTokenUpdating.current = true;
       await axios({
         method: "post",
-        url: `${AUTH_BASE_URL}/api/auth/token`,
+        url: "/api/auth/token",
         data: {
           refreshToken,
         },
@@ -62,7 +61,7 @@ export function AuthProvider({ children }) {
     let status = "LOADING";
     await axios({
       method: "post",
-      url: `${AUTH_BASE_URL}/api/auth/login`,
+      url: "/api/auth/login",
       data: { email, password },
     })
       .then((data) => {
@@ -81,7 +80,7 @@ export function AuthProvider({ children }) {
     let status = "LOADING";
     await axios({
       method: "delete",
-      url: `${AUTH_BASE_URL}/api/auth/logout`,
+      url: "/api/auth/logout",
       data: {
         refreshToken,
       },
