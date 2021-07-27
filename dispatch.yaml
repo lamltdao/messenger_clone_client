@@ -1,0 +1,9 @@
+dispatch:
+  - url: "*/api/auth/*"
+    service: auth
+  - url: "*/api/user/*"
+    service: auth
+  - url: "*/api/conversation/*"
+    service: conversation
+  - url: "messenger-clone-321009.et.r.appspot.com/*"
+    service: default
