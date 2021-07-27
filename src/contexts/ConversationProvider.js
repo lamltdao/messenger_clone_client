@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import { CONVERSATION_BASE_URL } from "../config";
 import { useSocket } from "./SocketProvider";
 import { useAuthContext } from "./AuthProvider";
 import { useUserContext } from "./UserProvider";
@@ -20,7 +19,7 @@ export function ConversationProvider({ children }) {
     console.log("fetch conversation");
     authFetch({
       method: "get",
-      url: `${CONVERSATION_BASE_URL}/api/conversation`,
+      url: "/api/conversation",
       params: {
         messageLimit: 30,
       },
@@ -46,7 +45,7 @@ export function ConversationProvider({ children }) {
     };
     authFetch({
       method: "post",
-      url: `${CONVERSATION_BASE_URL}/api/conversation`,
+      url: "/api/conversation",
       data: body,
     })
       .then((data) => {
